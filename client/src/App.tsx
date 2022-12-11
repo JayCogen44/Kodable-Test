@@ -1,5 +1,5 @@
-import React from 'react';
-import { PizzaDashboard } from './PizzaDashboard';
+import './App.css';
+import { PizzaDashboard } from './components/PizzaDashboard';
 
 function App() {
   return <PizzaDashboard />;
