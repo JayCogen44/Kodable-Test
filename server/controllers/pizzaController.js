@@ -1,3 +1,5 @@
+const db = require('../database');
+
 function getPizzaData(req, res, next) {
   db.query(`SELECT * FROM pizza_analytics`)
     .then((response) => {
