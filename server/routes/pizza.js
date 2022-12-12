@@ -27,6 +27,15 @@ const pizza = (app) => {
       res.locals.data = {};
     }
   );
+
+  app.post(
+    '/api/add-pizza-entry',
+    pizzaController.addPizzaEntry,
+    function (req, res) {
+      res.send(res.locals.data);
+      res.locals.data = {};
+    }
+  );
 };
 
 module.exports = pizza;

@@ -70,8 +70,11 @@ function getBiggestPizzaStreak(req, res, next) {
     });
 }
 
+function addPizzaEntry(req, res, next) {}
+
 module.exports = {
   getPizzaData,
   getMostPizzaInGivenMonth,
   getBiggestPizzaStreak,
+  addPizzaEntry,
 };
