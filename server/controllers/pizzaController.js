@@ -69,7 +69,6 @@ function getBiggestPizzaStreak(req, res, next) {
 }
 
 function addPizzaEntry(req, res, next) {
-  console.log(req.body);
   db.query(
     `
     INSERT into pizza_analytics (person, meat_type, date)

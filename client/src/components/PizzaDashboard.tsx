@@ -82,7 +82,6 @@ export const PizzaDashboard = () => {
         : 'No one ate pizza this month :(';
 
       setReportData({ longestStreak: longestStreak, mostPizzaDay });
-
       setError('');
     })();
   }, [setReportData]);
@@ -152,7 +151,7 @@ export const PizzaDashboard = () => {
             style={{ width: '100px', padding: '10px', alignSelf: 'flex-end' }}
             onClick={() => addPizzaEntry()}
           >
-            Add
+            Add Entry
           </button>
         </div>
         <div className='action marsala'>

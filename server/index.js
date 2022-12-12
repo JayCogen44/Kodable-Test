@@ -1,9 +1,10 @@
-require('dotenv').config();
 const cors = require('cors');
 const express = require('express');
 const routes = require('./routes');
-console.log(routes);
-//
+
+const PORT = 8080;
+
+// spin up express
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -12,6 +13,6 @@ app.use(cors());
 routes.initialize(app);
 routes.pizza(app);
 
-app.listen(process.env.PORT, function () {
-  console.log(`server running: listening on port ${process.env.PORT}`);
+app.listen(PORT, function () {
+  console.log(`server running: listening on port ${PORT}`);
 });
