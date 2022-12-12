@@ -2,7 +2,85 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
+button {
+  border: none;
+  cursor: pointer;
+}
+
+h4 {
+  margin-top: 0;
+}
+
 .container {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.actions {
+  width: 100%;
+  display: flex;
+  justify-content: stretch;
+}
+
+.action {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;
+}
+
+button.action {
+  font-size: 1.5rem;
+  transition: all 0.2s;
   justify-content: center;
+  align-items: center;
+}
+
+button.action:hover {
+  opacity: 0.7;
+}
+
+.action input,
+.action select {
+  margin-bottom: 15px;
+}
+
+.emerald {
+  background-color: #009b77;
+}
+
+.marsala {
+  background-color: #955251;
+}
+
+.honey-sucle {
+  background-color: #d65076;
+}
+
+.mimosa {
+  background-color: #efc050;
+}
+
+.error {
+  color: #dd4124;
+}
+
+.output {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.output-header {
+  font-weight: bold;
+  border-bottom: 1px solid;
+  margin-bottom: 10px;
+}
+
+.output-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  padding-bottom: 10px;
 }

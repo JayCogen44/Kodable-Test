@@ -51,9 +51,7 @@ function getBiggestPizzaStreak(req, res, next) {
       const dates = [];
       let i = 0;
       const rows = response.rows;
-      console.log(rows);
       while (rows[i]) {
-        console.log(rows[i].count);
         if (rows[i - 1] && rows[i - 1].count < rows[i].count) {
           dates.push(rows[i - 1]);
           if (i === rows.length - 1 || rows[i].count > rows[i + 1].count)
@@ -70,7 +68,23 @@ function getBiggestPizzaStreak(req, res, next) {
     });
 }
 
-function addPizzaEntry(req, res, next) {}
+function addPizzaEntry(req, res, next) {
+  console.log(req.body);
+  db.query(
+    `
+    INSERT into pizza_analytics (person, meat_type, date)
+    VALUES ('${req.body.name}', '${req.body.meatType}', '${req.body.date}')
+    RETURNING person, meat_type, date;
+  `
+  )
+    .then((response) => {
+      res.locals.entry = response.rows;
+      next();
+    })
+    .catch((err) => {
+      console.log('hit ' + err);
+    });
+}
 
 module.exports = {
   getPizzaData,
