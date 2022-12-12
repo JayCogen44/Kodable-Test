@@ -21,10 +21,15 @@ type ReportData = {
   mostPizzaDay: string;
 };
 
+type MostPizzaDayData = {
+  day: number;
+  count: string;
+};
+
 export const PizzaDashboard = () => {
   const [outputData, setOutputData] = useState<PizzaDataSet | null>(null);
   const [pizzaData, setPizzaData] = useState<PizzaDataSet>([]);
-  const [reportData, setReportData] = useState<StreakDataSet>([]);
+  const [reportData, setReportData] = useState<ReportData | null>();
   const [name, setName] = useState<string>('');
   const [meatType, setMeatType] = useState<string>('');
   const [filterValue, setFilterValue] = useState<string>('');
@@ -34,6 +39,7 @@ export const PizzaDashboard = () => {
   const getAllPizzaData = useCallback(() => {
     (async () => {
       const res: PizzaDataSet = await getData('/api/all-pizza-data');
+      setReportData(null);
       setPizzaData(res);
       setError('');
     })();
@@ -43,22 +49,43 @@ export const PizzaDashboard = () => {
     const date = new Date();
     const month = date.getMonth();
     (async () => {
-      const mostPizzaInMonth: PizzaDataSet = await getData(
+      const mostPizzaInMonth: MostPizzaDayData[] = await getData(
         `/api/pizza-month?month=${month}`
       );
       const streakData: StreakDataSet = await getData('/api/pizza-streak');
 
-      console.log(streakData, mostPizzaInMonth);
+      const curMonthStreakData = streakData.filter(
+        (row) => new Date(row.date).getMonth() === month
+      );
 
-      // const longestStreak =
+      let longestStreak = 0;
+      let curStreak = 0;
+      let prev;
+      let cur;
 
-      // const mostPizzaDay =
+      for (let i = 0; i < curMonthStreakData.length; i++) {
+        if (curMonthStreakData[i - 1]) {
+          prev = curMonthStreakData[i - 1].count;
+          cur = curMonthStreakData[i].count;
+          if (prev < cur) {
+            curStreak++;
+          } else if (curStreak > longestStreak) {
+            longestStreak = curStreak;
+          } else {
+            curStreak = 0;
+          }
+        }
+      }
 
-      //setReportData()
+      const mostPizzaDay = !!mostPizzaInMonth.length
+        ? mostPizzaInMonth[0].day.toString()
+        : 'No one ate pizza this month :(';
+
+      setReportData({ longestStreak: longestStreak, mostPizzaDay });
 
       setError('');
     })();
-  }, [reportData]);
+  }, [setReportData]);
 
   const addPizzaEntry = useCallback(() => {
     (async () => {
@@ -84,17 +111,16 @@ export const PizzaDashboard = () => {
     const filteringData = pizzaData.filter((row) =>
       `${row.person}${row.meat_type}${row.date}`.includes(filterValue)
     );
-    setFilteredData([...filteringData]);
+    setFilteredData(filteringData);
   }, [filterValue, pizzaData]);
 
   useEffect(() => {
-    const data = !!filteredData?.length
-      ? filteredData
-      : !!pizzaData.length
-      ? pizzaData
-      : null;
-    setOutputData(data ? [...data] : null);
-  }, [pizzaData, filteredData]);
+    setOutputData(pizzaData);
+  }, [pizzaData]);
+
+  useEffect(() => {
+    setOutputData(filteredData);
+  }, [filteredData]);
 
   return (
     <div className='container'>
@@ -141,40 +167,52 @@ export const PizzaDashboard = () => {
       </div>
 
       <h2>Pizza Data</h2>
-      {!!outputData && (
-        <div className='output'>
-          <div
-            style={{
-              display: 'flex',
-              gap: '10px',
-              justifyContent: 'flex-end',
-              marginBottom: '20px',
-            }}
-          >
-            <input
-              value={filterValue}
-              onChange={(e) => setFilterValue(e.target.value)}
-            />
-            <button
-              style={{ width: '100px', padding: '10px' }}
-              onClick={() => filterPizzaData()}
+
+      {reportData ? (
+        <>
+          Longest Streak during{' '}
+          {new Date().toLocaleString('default', { month: 'long' })}
+          {' is '}
+          <b>{reportData.longestStreak}</b>
+          <br />
+          {reportData.mostPizzaDay}
+        </>
+      ) : (
+        !!outputData && (
+          <div className='output'>
+            <div
+              style={{
+                display: 'flex',
+                gap: '10px',
+                justifyContent: 'flex-end',
+                marginBottom: '20px',
+              }}
             >
-              Filter
-            </button>
-          </div>
-          <div className='output-row output-header'>
-            <div>Name</div>
-            <div>Meat Type</div>
-            <div>Date</div>
-          </div>
-          {outputData?.map((pizza, i) => (
-            <div key={i} className='output-row'>
-              <div>{pizza.person}</div>
-              <div>{pizza.meat_type}</div>
-              <div>{new Date(pizza.date).toDateString()}</div>
+              <input
+                value={filterValue}
+                onChange={(e) => setFilterValue(e.target.value)}
+              />
+              <button
+                style={{ width: '100px', padding: '10px' }}
+                onClick={() => filterPizzaData()}
+              >
+                Filter
+              </button>
             </div>
-          ))}
-        </div>
+            <div className='output-row output-header'>
+              <div>Name</div>
+              <div>Meat Type</div>
+              <div>Date</div>
+            </div>
+            {outputData?.map((pizza, i) => (
+              <div key={i} className='output-row'>
+                <div>{pizza.person}</div>
+                <div>{pizza.meat_type}</div>
+                <div>{new Date(pizza.date).toDateString()}</div>
+              </div>
+            ))}
+          </div>
+        )
       )}
     </div>
   );

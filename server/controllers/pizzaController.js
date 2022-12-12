@@ -82,7 +82,8 @@ function addPizzaEntry(req, res, next) {
       next();
     })
     .catch((err) => {
-      console.log('hit ' + err);
+      console.log(err);
+      db.end();
     });
 }
 
