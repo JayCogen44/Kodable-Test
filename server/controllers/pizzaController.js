@@ -19,11 +19,12 @@ function getMostPizzaInGivenMonth(req, res, next) {
     SELECT EXTRACT(DAY FROM date) as day,
     COUNT(date) as Count 
     FROM pizza_analytics 
-    WHERE EXTRACT(MONTH FROM date) = ${month}
+    WHERE EXTRACT(MONTH FROM date) = $1
     GROUP BY date
     ORDER BY count DESC
     LIMIT 1
-    `
+    `,
+    [month]
   )
     .then((response) => {
       res.locals.data = response.rows;
